@@ -12,7 +12,7 @@ export default function HeroSection() {
                             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                             <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
                         </span>
-                        Announcing $20M in Seed & Series A Funding
+                        Developed by Jared Omen
                     </div>
                     <div className="space-y-4">
                         <h1 className="text-5xl md:text-7xl font-semibold tracking-tight leading-[1.1] text-balance">
@@ -25,7 +25,7 @@ export default function HeroSection() {
                     <div className="flex items-center gap-4 pt-2">
                         <Button
                             size="lg"
-                            className="rounded-full px-8 h-14 text-lg bg-black hover:bg-black/90 text-white gap-2 shadow-xl hover:shadow-2xl hover:-translate-y-0.5 transition-all"
+                            className="rounded-full px-10 h-12 text-base bg-black hover:bg-black/90 text-white gap-2 shadow-xl hover:shadow-2xl hover:-translate-y-0.5 transition-all"
                         >
                             Get Started <ArrowUpRight className="w-5 h-5" />
                         </Button>

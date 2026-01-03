@@ -15,7 +15,8 @@
   --secondary-foreground: oklch(0.208 0.042 265.755);
   --muted: oklch(0.968 0.007 247.896);
   --muted-foreground: oklch(0.554 0.046 257.417);
-  --accent: oklch(0.968 0.007 247.896); /* Indigo accent */
+  --accent: oklch(0.968 0.007 247.896);
+  /* Indigo accent */
   --accent-foreground: oklch(0.208 0.042 265.755);
   --destructive: oklch(0.577 0.245 27.325);
   --destructive-foreground: oklch(0.98 0.01 30);
@@ -123,24 +124,26 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground scroll-smooth;
   }
 }
 
-/* Custom smooth snapping for 100vh sections */
+/* Custom layout for fullscreen sections without scroll snapping */
 .snap-container {
-  @apply h-screen overflow-y-auto snap-y snap-mandatory scroll-smooth;
+  @apply w-full;
 }
 
 .snap-section {
-  @apply h-screen w-full snap-start snap-always relative flex flex-col;
+  @apply min-h-screen w-full relative flex flex-col;
 }
 
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }
