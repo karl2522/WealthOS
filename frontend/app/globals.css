@@ -125,8 +125,12 @@
     @apply border-border outline-ring/50;
   }
 
+  html {
+    @apply scroll-smooth;
+  }
+
   body {
-    @apply bg-background text-foreground scroll-smooth;
+    @apply bg-background text-foreground;
   }
 }
 
@@ -137,14 +141,4 @@
 
 .snap-section {
   @apply min-h-screen w-full relative flex flex-col;
-}
-
-@layer base {
-  * {
-    @apply border-border outline-ring/50;
-  }
-
-  body {
-    @apply bg-background text-foreground;
-  }
 }

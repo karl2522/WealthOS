@@ -17,8 +17,7 @@ export default function Navbar() {
                     </a>
                 </nav>
                 <Button
-                    variant="outline"
-                    className="rounded-full px-6 bg-white/10 backdrop-blur-md border-white/20 hover:bg-white/20 transition-all"
+                    className="rounded-full px-6 bg-white text-black hover:bg-white/90 transition-all cursor-pointer font-medium"
                 >
                     Get Started
                 </Button>
