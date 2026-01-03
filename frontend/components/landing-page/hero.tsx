@@ -25,7 +25,7 @@ export default function HeroSection() {
                     <div className="flex items-center gap-4 pt-2">
                         <Button
                             size="lg"
-                            className="rounded-full px-10 h-12 text-base bg-black hover:bg-black/90 text-white gap-2 shadow-xl hover:shadow-2xl hover:-translate-y-0.5 transition-all"
+                            className="rounded-full px-10 h-12 text-base bg-black hover:bg-black/90 text-white gap-2 shadow-xl hover:shadow-2xl hover:-translate-y-0.5 transition-all cursor-pointer"
                         >
                             Get Started <ArrowUpRight className="w-5 h-5" />
                         </Button>
