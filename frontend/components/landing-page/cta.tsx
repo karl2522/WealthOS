@@ -20,7 +20,7 @@ export default function CTASection() {
                         >
                             Get Started Now
                         </Button>
-                        <button className="text-lg font-medium hover:underline flex items-center gap-2">
+                        <button className="text-lg font-medium hover:underline flex items-center gap-2 cursor-pointer">
                             Speak with our team <ArrowRight className="w-5 h-5" />
                         </button>
                     </div>
