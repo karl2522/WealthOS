@@ -1,6 +1,7 @@
 import { HeroChart } from "@/components/hero-chart"
 import { Button } from "@/components/ui/button"
 import { ArrowUpRight, BarChart3, PieChart, ShieldCheck, TrendingUp } from "lucide-react"
+import Link from "next/link"
 
 export default function HeroSection() {
     return (
@@ -23,12 +24,14 @@ export default function HeroSection() {
                         </p>
                     </div>
                     <div className="flex items-center gap-4 pt-2">
-                        <Button
-                            size="lg"
-                            className="rounded-full px-10 h-12 text-base bg-black hover:bg-black/90 text-white gap-2 shadow-xl hover:shadow-2xl hover:-translate-y-0.5 transition-all cursor-pointer"
-                        >
-                            Get Started <ArrowUpRight className="w-5 h-5" />
-                        </Button>
+                        <Link href="/register">
+                            <Button
+                                size="lg"
+                                className="rounded-full px-10 h-12 text-base bg-black hover:bg-black/90 text-white gap-2 shadow-xl hover:shadow-2xl hover:-translate-y-0.5 transition-all cursor-pointer"
+                            >
+                                Get Started <ArrowUpRight className="w-5 h-5" />
+                            </Button>
+                        </Link>
                     </div>
                 </div>
                 <div className="relative animate-in fade-in slide-in-from-right-8 duration-1000 delay-200">
