@@ -77,9 +77,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         try {
             await api.post('/auth/logout');
             setUser(null);
-            router.push('/');
+            // Use window.location for a hard redirect to ensure clean state
+            window.location.href = '/';
         } catch (error) {
             console.error('Logout error:', error);
+            // Even if logout API fails, clear user and redirect
+            setUser(null);
+            window.location.href = '/';
         }
     };
 

@@ -14,18 +14,24 @@ api.interceptors.response.use(
     async (error) => {
         const originalRequest = error.config;
 
-        // If 401 and not already retried, try to refresh token
-        if (error.response?.status === 401 && !originalRequest._retry) {
+        // Don't try to refresh for refresh/logout endpoints or if already retried
+        const isRefreshEndpoint = originalRequest.url?.includes('/auth/refresh');
+        const isLogoutEndpoint = originalRequest.url?.includes('/auth/logout');
+
+        if (isRefreshEndpoint || isLogoutEndpoint || originalRequest._retry) {
+            return Promise.reject(error);
+        }
+
+        // If 401, try to refresh token once
+        if (error.response?.status === 401) {
             originalRequest._retry = true;
 
             try {
                 await api.post('/auth/refresh');
                 return api(originalRequest);
             } catch (refreshError) {
-                // Refresh failed, redirect to login
-                if (typeof window !== 'undefined') {
-                    window.location.href = '/login';
-                }
+                // Refresh failed, clear any state and do nothing
+                // The auth provider will handle redirects
                 return Promise.reject(refreshError);
             }
         }
