@@ -34,56 +34,53 @@ export default function Navbar() {
                     </a>
                 </nav>
 
-                {!loading && (
-                    <>
-                        {!user ? (
-                            <div className="flex items-center gap-3">
-                                <Link href="/login">
-                                    <Button
-                                        variant="ghost"
-                                        className="rounded-full px-6 text-white hover:bg-white/10 transition-all cursor-pointer font-medium"
-                                    >
-                                        Sign In
-                                    </Button>
+
+                {!user ? (
+                    <div className="flex items-center gap-3">
+                        <Link href="/login">
+                            <Button
+                                variant="outline"
+                                className="rounded-full px-6 border-white text-white hover:bg-white hover:text-black transition-all cursor-pointer font-medium bg-transparent"
+                            >
+                                Sign In
+                            </Button>
+                        </Link>
+                        <Link href="/register">
+                            <Button
+                                className="rounded-full px-6 bg-white text-black hover:bg-white/90 transition-all cursor-pointer font-medium"
+                            >
+                                Get Started
+                            </Button>
+                        </Link>
+                    </div>
+                ) : (
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button
+                                className="rounded-full px-6 bg-white text-black hover:bg-white/90 transition-all cursor-pointer font-medium"
+                            >
+                                <User className="w-4 h-4 mr-2" />
+                                {user.firstName}
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="w-48">
+                            <DropdownMenuLabel>
+                                {user.firstName} {user.lastName}
+                            </DropdownMenuLabel>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem asChild>
+                                <Link href="/dashboard" className="cursor-pointer">
+                                    <LayoutDashboard className="w-4 h-4 mr-2" />
+                                    Dashboard
                                 </Link>
-                                <Link href="/register">
-                                    <Button
-                                        className="rounded-full px-6 bg-white text-black hover:bg-white/90 transition-all cursor-pointer font-medium"
-                                    >
-                                        Get Started
-                                    </Button>
-                                </Link>
-                            </div>
-                        ) : (
-                            <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                    <Button
-                                        className="rounded-full px-6 bg-white text-black hover:bg-white/90 transition-all cursor-pointer font-medium"
-                                    >
-                                        <User className="w-4 h-4 mr-2" />
-                                        {user.firstName}
-                                    </Button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent align="end" className="w-48">
-                                    <DropdownMenuLabel>
-                                        {user.firstName} {user.lastName}
-                                    </DropdownMenuLabel>
-                                    <DropdownMenuSeparator />
-                                    <DropdownMenuItem asChild>
-                                        <Link href="/dashboard" className="cursor-pointer">
-                                            <LayoutDashboard className="w-4 h-4 mr-2" />
-                                            Dashboard
-                                        </Link>
-                                    </DropdownMenuItem>
-                                    <DropdownMenuSeparator />
-                                    <DropdownMenuItem onClick={() => logout()} className="cursor-pointer text-red-600">
-                                        <LogOut className="w-4 h-4 mr-2" />
-                                        Logout
-                                    </DropdownMenuItem>
-                                </DropdownMenuContent>
-                            </DropdownMenu>
-                        )}
-                    </>
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem onClick={() => logout()} className="cursor-pointer text-red-600">
+                                <LogOut className="w-4 h-4 mr-2" />
+                                Logout
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
                 )}
             </div>
         </header>
