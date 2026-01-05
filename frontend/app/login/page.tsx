@@ -1,158 +1,148 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { useAuth } from '@/contexts/auth-provider';
-import { useToast } from '@/hooks/use-toast';
-import { Loader2 } from 'lucide-react';
-import Link from 'next/link';
-import { useState } from 'react';
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useAuth } from "@/contexts/auth-provider";
+import { useToast } from "@/hooks/use-toast";
+import { ArrowLeft, Eye, EyeOff, Shield } from "lucide-react";
+import Link from "next/link";
+import { FormEvent, useState } from "react";
 
 export default function LoginPage() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [isLoading, setIsLoading] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
+    const [loading, setLoading] = useState(false);
     const { login } = useAuth();
     const { toast } = useToast();
 
-    const handleSubmit = async (e: React.FormEvent) => {
+    const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
-        setIsLoading(true);
+        setLoading(true);
 
         try {
             await login(email, password);
             toast({
-                title: 'Success!',
-                description: 'You have successfully logged in.',
+                title: "Login successful",
+                description: "Welcome back to WealthOS!",
             });
         } catch (error: any) {
             toast({
-                title: 'Login Failed',
-                description: error.message || 'Invalid email or password',
-                variant: 'destructive',
+                title: "Login failed",
+                description: error.message || "Invalid email or password",
+                variant: "destructive",
             });
         } finally {
-            setIsLoading(false);
+            setLoading(false);
         }
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-slate-50 flex items-center justify-center p-4">
-            {/* Background decorative elements */}
-            <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                <div className="absolute top-20 left-20 w-72 h-72 bg-blue-200 rounded-full blur-3xl opacity-20" />
-                <div className="absolute bottom-20 right-20 w-96 h-96 bg-emerald-200 rounded-full blur-3xl opacity-20" />
-            </div>
-
-            <div className="w-full max-w-md relative z-10">
-                {/* Card */}
-                <div className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-[0_32px_64px_-16px_rgba(0,0,0,0.1)] border border-gray-100 p-8 md:p-10">
-                    {/* Header */}
-                    <div className="text-center mb-8">
-                        <Link href="/" className="inline-block mb-6">
-                            <div className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-emerald-600 bg-clip-text text-transparent">
-                                WealthOS
-                            </div>
-                        </Link>
-                        <h1 className="text-3xl font-bold tracking-tight mb-2">Welcome back</h1>
-                        <p className="text-muted-foreground">Sign in to continue to your account</p>
+        <div className="relative flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-50 via-white to-blue-50/30 p-4 md:p-8 overflow-hidden">
+            {/* Subtle blue accent orbs */}
+            <div className="absolute top-0 left-0 w-96 h-96 bg-blue-400/10 rounded-full blur-3xl"></div>
+            <div className="absolute bottom-0 right-0 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl"></div>
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-blue-300/5 rounded-full blur-3xl"></div>
+            <Link href="/" className="absolute left-4 top-4 md:left-8 md:top-8 z-10">
+                <Button variant="ghost" size="sm" className="gap-2 text-muted-foreground hover:text-foreground">
+                    <ArrowLeft className="h-4 w-4" />
+                    Back to home
+                </Button>
+            </Link>
+            <div className="w-full max-w-[min(420px,90vw)] space-y-8 relative z-10">
+                <div className="flex flex-col items-center gap-3 text-center">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-600 text-white shadow-lg">
+                        <Shield className="h-7 w-7" />
                     </div>
-
-                    {/* Form */}
-                    <form onSubmit={handleSubmit} className="space-y-5">
-                        <div className="space-y-2">
-                            <Label htmlFor="email" className="text-sm font-medium">
-                                Email
-                            </Label>
-                            <Input
-                                id="email"
-                                type="email"
-                                placeholder="you@example.com"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                required
-                                className="h-11 rounded-xl border-gray-200 focus:border-blue-500"
-                                disabled={isLoading}
-                            />
-                        </div>
-
-                        <div className="space-y-2">
-                            <div className="flex items-center justify-between">
-                                <Label htmlFor="password" className="text-sm font-medium">
-                                    Password
-                                </Label>
-                                <Link
-                                    href="#"
-                                    className="text-sm text-blue-600 hover:text-blue-700 font-medium transition-colors"
-                                >
-                                    Forgot password?
-                                </Link>
-                            </div>
-                            <Input
-                                id="password"
-                                type="password"
-                                placeholder="••••••••"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                required
-                                className="h-11 rounded-xl border-gray-200 focus:border-blue-500"
-                                disabled={isLoading}
-                            />
-                        </div>
-
-                        <Button
-                            type="submit"
-                            className="w-full h-12 rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold shadow-lg shadow-blue-500/30 transition-all hover:shadow-xl hover:shadow-blue-500/40"
-                            disabled={isLoading}
-                        >
-                            {isLoading ? (
-                                <>
-                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                    Signing in...
-                                </>
-                            ) : (
-                                'Sign in'
-                            )}
-                        </Button>
-                    </form>
-
-                    {/* Divider */}
-                    <div className="relative my-8">
-                        <div className="absolute inset-0 flex items-center">
-                            <div className="w-full border-t border-gray-200"></div>
-                        </div>
-                        <div className="relative flex justify-center text-sm">
-                            <span className="px-4 bg-white text-muted-foreground">or</span>
-                        </div>
-                    </div>
-
-                    {/* Sign up link */}
-                    <div className="text-center">
-                        <p className="text-sm text-muted-foreground">
-                            Don't have an account?{' '}
-                            <Link
-                                href="/register"
-                                className="font-semibold text-blue-600 hover:text-blue-700 transition-colors"
-                            >
-                                Sign up
-                            </Link>
-                        </p>
+                    <div className="space-y-1">
+                        <h1 className="text-3xl font-bold tracking-tight">WealthOS</h1>
+                        <p className="text-sm text-muted-foreground">Sign in to manage your portfolio</p>
                     </div>
                 </div>
-
-                {/* Footer */}
-                <p className="text-center text-sm text-muted-foreground mt-8">
-                    By continuing, you agree to our{' '}
-                    <Link href="#" className="underline hover:text-foreground transition-colors">
+                <Card className="border shadow-2xl bg-white">
+                    <form onSubmit={handleSubmit}>
+                        <CardHeader className="space-y-2 pb-6">
+                            <CardTitle className="text-2xl font-bold">Welcome back</CardTitle>
+                            <CardDescription className="text-base">Enter your credentials to access your account</CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-5">
+                            <div className="space-y-2">
+                                <Label htmlFor="email" className="text-sm font-medium">Email address</Label>
+                                <Input
+                                    id="email"
+                                    type="email"
+                                    placeholder="name@example.com"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    required
+                                    disabled={loading}
+                                    className="h-11"
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <div className="flex items-center justify-between">
+                                    <Label htmlFor="password" className="text-sm font-medium">Password</Label>
+                                    <Link href="/forgot-password" className="text-xs text-blue-600 hover:text-blue-700 hover:underline font-medium">
+                                        Forgot password?
+                                    </Link>
+                                </div>
+                                <div className="relative">
+                                    <Input
+                                        id="password"
+                                        type={showPassword ? "text" : "password"}
+                                        placeholder="Enter your password"
+                                        value={password}
+                                        onChange={(e) => setPassword(e.target.value)}
+                                        required
+                                        disabled={loading}
+                                        className="h-11 pr-10 [&::-ms-reveal]:hidden [&::-ms-clear]:hidden [&::-webkit-credentials-auto-fill-button]:hidden [&::-webkit-contacts-auto-fill-button]:hidden"
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowPassword(!showPassword)}
+                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+                                        tabIndex={-1}
+                                    >
+                                        {showPassword ? (
+                                            <EyeOff className="h-4 w-4" />
+                                        ) : (
+                                            <Eye className="h-4 w-4" />
+                                        )}
+                                    </button>
+                                </div>
+                            </div>
+                        </CardContent>
+                        <CardFooter className="flex flex-col gap-5 pt-6">
+                            <Button
+                                type="submit"
+                                className="w-full text-base font-semibold h-12 bg-blue-600 hover:bg-blue-700"
+                                disabled={loading}
+                            >
+                                {loading ? 'Signing in...' : 'Sign in'}
+                            </Button>
+                            <div className="text-center text-sm text-muted-foreground">
+                                Don&apos;t have an account?{" "}
+                                <Link href="/register" className="text-blue-600 hover:text-blue-700 font-semibold hover:underline">
+                                    Sign up
+                                </Link>
+                            </div>
+                        </CardFooter>
+                    </form>
+                </Card>
+                <p className="px-4 text-center text-xs text-muted-foreground leading-relaxed">
+                    By continuing, you agree to our{" "}
+                    <Link href="/terms" className="underline underline-offset-4 hover:text-blue-600 font-medium">
                         Terms of Service
-                    </Link>{' '}
-                    and{' '}
-                    <Link href="#" className="underline hover:text-foreground transition-colors">
+                    </Link>{" "}
+                    and{" "}
+                    <Link href="/privacy" className="underline underline-offset-4 hover:text-blue-600 font-medium">
                         Privacy Policy
                     </Link>
+                    .
                 </p>
             </div>
         </div>
-    );
+    )
 }
