@@ -35,23 +35,23 @@ export function HoldingsTable() {
                     <Table>
                         <TableHeader>
                             <TableRow className="bg-muted/50">
-                                <TableHead className="w-[100px]">Symbol</TableHead>
+                                <TableHead className="w-[100px] pl-6">Symbol</TableHead>
                                 <TableHead>Asset Name</TableHead>
                                 <TableHead className="hidden md:table-cell">Amount</TableHead>
                                 <TableHead className="text-right">Price</TableHead>
                                 <TableHead className="text-right">Total Value</TableHead>
-                                <TableHead className="text-right">Change</TableHead>
+                                <TableHead className="text-right pr-6">Change</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
                             {holdings.map((holding) => (
                                 <TableRow key={holding.symbol} className="hover:bg-muted/30 transition-colors">
-                                    <TableCell className="font-bold">{holding.symbol}</TableCell>
+                                    <TableCell className="font-bold pl-6">{holding.symbol}</TableCell>
                                     <TableCell className="max-w-[150px] truncate">{holding.name}</TableCell>
                                     <TableCell className="hidden md:table-cell text-muted-foreground">{holding.amount}</TableCell>
                                     <TableCell className="text-right">{holding.price}</TableCell>
                                     <TableCell className="text-right font-medium">{holding.total}</TableCell>
-                                    <TableCell className="text-right">
+                                    <TableCell className="text-right pr-6">
                                         <Badge variant={holding.change.startsWith("+") ? "secondary" : "destructive"} className="font-mono">
                                             {holding.change}
                                         </Badge>

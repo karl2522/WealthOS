@@ -1,20 +1,12 @@
 'use client';
 
 import { Button } from "@/components/ui/button";
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/contexts/auth-provider";
-import { LayoutDashboard, LogOut, User } from "lucide-react";
+import { LayoutDashboard } from "lucide-react";
 import Link from "next/link";
 
 export default function Navbar() {
-    const { user, logout, loading } = useAuth();
+    const { user, loading } = useAuth();
 
     return (
         <header className="fixed top-0 w-full z-50 px-6 py-4 flex items-center justify-center mix-blend-difference text-white">
@@ -54,33 +46,14 @@ export default function Navbar() {
                         </Link>
                     </div>
                 ) : (
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <Button
-                                className="rounded-full px-6 bg-white text-black hover:bg-white/90 transition-all cursor-pointer font-medium"
-                            >
-                                <User className="w-4 h-4 mr-2" />
-                                {user.firstName}
-                            </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="w-48">
-                            <DropdownMenuLabel>
-                                {user.firstName} {user.lastName}
-                            </DropdownMenuLabel>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem asChild>
-                                <Link href="/dashboard" className="cursor-pointer">
-                                    <LayoutDashboard className="w-4 h-4 mr-2" />
-                                    Dashboard
-                                </Link>
-                            </DropdownMenuItem>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem onClick={() => logout()} className="cursor-pointer text-red-600">
-                                <LogOut className="w-4 h-4 mr-2" />
-                                Logout
-                            </DropdownMenuItem>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
+                    <Link href="/dashboard">
+                        <Button
+                            className="rounded-full px-6 bg-white text-black hover:bg-white/90 transition-all cursor-pointer font-medium"
+                        >
+                            <LayoutDashboard className="w-4 h-4 mr-2" />
+                            Go to Dashboard
+                        </Button>
+                    </Link>
                 )}
             </div>
         </header>
