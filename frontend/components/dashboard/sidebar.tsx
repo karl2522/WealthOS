@@ -1,18 +1,19 @@
 "use client"
 
-import { LayoutDashboard, PieChart, Wallet, TrendingUp, Settings, Bell, LogOut, ShieldCheck } from "lucide-react"
 import {
     Sidebar,
     SidebarContent,
     SidebarFooter,
+    SidebarGroup,
+    SidebarGroupContent,
+    SidebarGroupLabel,
     SidebarHeader,
     SidebarMenu,
     SidebarMenuButton,
     SidebarMenuItem,
-    SidebarGroup,
-    SidebarGroupLabel,
-    SidebarGroupContent,
 } from "@/components/ui/sidebar"
+import { Bell, LayoutDashboard, PieChart, Settings, ShieldCheck, TrendingUp, Wallet } from "lucide-react"
+import { LogoutDialog } from "./logout-dialog"
 
 const navItems = [
     { icon: LayoutDashboard, label: "Overview", active: true },
@@ -74,10 +75,7 @@ export function DashboardSidebar() {
             <SidebarFooter className="p-4 border-t">
                 <SidebarMenu>
                     <SidebarMenuItem>
-                        <SidebarMenuButton className="text-destructive hover:text-destructive">
-                            <LogOut className="size-4" />
-                            <span>Log out</span>
-                        </SidebarMenuButton>
+                        <LogoutDialog />
                     </SidebarMenuItem>
                 </SidebarMenu>
             </SidebarFooter>

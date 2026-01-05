@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/contexts/auth-provider";
 import { useToast } from "@/hooks/use-toast";
-import { ArrowLeft, Eye, EyeOff, Shield } from "lucide-react";
+import { ArrowLeft, Eye, EyeOff, Loader2, Shield } from "lucide-react";
 import Link from "next/link";
 import { FormEvent, useState } from "react";
 
@@ -27,6 +27,7 @@ export default function LoginPage() {
             toast({
                 title: "Login successful",
                 description: "Welcome back to WealthOS!",
+                variant: "success",
             });
         } catch (error: any) {
             toast({
@@ -120,7 +121,14 @@ export default function LoginPage() {
                                 className="w-full text-base font-semibold h-12 bg-blue-600 hover:bg-blue-700"
                                 disabled={loading}
                             >
-                                {loading ? 'Signing in...' : 'Sign in'}
+                                {loading ? (
+                                    <>
+                                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                        Signing in...
+                                    </>
+                                ) : (
+                                    'Sign in'
+                                )}
                             </Button>
                             <div className="text-center text-sm text-muted-foreground">
                                 Don&apos;t have an account?{" "}

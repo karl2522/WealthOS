@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/contexts/auth-provider";
 import { useToast } from "@/hooks/use-toast";
-import { ArrowLeft, Check, Eye, EyeOff, Shield } from "lucide-react";
+import { ArrowLeft, Check, Eye, EyeOff, Loader2, Shield } from "lucide-react";
 import Link from "next/link";
 import { FormEvent, useState } from "react";
 
@@ -39,6 +39,7 @@ export default function SignUpPage() {
             toast({
                 title: "Account created",
                 description: "Welcome to WealthOS!",
+                variant: "success",
             });
         } catch (error: any) {
             toast({
@@ -212,7 +213,14 @@ export default function SignUpPage() {
                                 className="w-full text-base font-semibold h-12 bg-blue-600 hover:bg-blue-700"
                                 disabled={loading}
                             >
-                                {loading ? 'Creating account...' : 'Create account'}
+                                {loading ? (
+                                    <>
+                                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                        Creating account...
+                                    </>
+                                ) : (
+                                    'Create account'
+                                )}
                             </Button>
                             <div className="text-center text-sm text-muted-foreground">
                                 Already have an account?{" "}
