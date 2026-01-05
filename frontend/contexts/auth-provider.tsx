@@ -48,7 +48,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         try {
             const response = await api.post('/auth/login', { email, password });
             setUser(response.data.user);
-            router.push('/dashboard');
+            // Force navigation and refresh
+            await router.push('/dashboard');
+            router.refresh();
         } catch (error: any) {
             throw new Error(error.response?.data?.message || 'Login failed');
         }
@@ -63,7 +65,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 lastName,
             });
             setUser(response.data.user);
-            router.push('/dashboard');
+            // Force navigation and refresh
+            await router.push('/dashboard');
+            router.refresh();
         } catch (error: any) {
             throw new Error(error.response?.data?.message || 'Registration failed');
         }
