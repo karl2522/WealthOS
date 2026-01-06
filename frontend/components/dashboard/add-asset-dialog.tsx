@@ -119,7 +119,7 @@ export function AddAssetDialog({ open, onOpenChange }: AddAssetDialogProps) {
     const currentSymbols = SYMBOLS[assetType];
 
     return (
-        <Dialog open={open} onOpenChange={onOpenChange}>
+        <Dialog open={open} onOpenChange={onOpenChange} modal={false}>
             <DialogContent className="sm:max-w-[500px]">
                 <DialogHeader>
                     <DialogTitle>Add Asset</DialogTitle>
@@ -156,7 +156,7 @@ export function AddAssetDialog({ open, onOpenChange }: AddAssetDialogProps) {
                                     <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                                 </Button>
                             </PopoverTrigger>
-                            <PopoverContent className="w-full p-0">
+                            <PopoverContent className="w-[--radix-popover-trigger-width] p-0" align="start">
                                 <Command>
                                     <CommandInput placeholder="Search symbol..." />
                                     <CommandEmpty>No symbol found.</CommandEmpty>
@@ -166,6 +166,7 @@ export function AddAssetDialog({ open, onOpenChange }: AddAssetDialogProps) {
                                                 key={symbol}
                                                 value={symbol}
                                                 onSelect={() => handleSymbolSelect(symbol)}
+                                                className="cursor-pointer"
                                             >
                                                 <Check
                                                     className={cn(
