@@ -5,6 +5,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { GoalModule } from './goal/goal.module';
+import { MarketDataModule } from './market-data/market-data.module';
 import { PortfolioAssetModule } from './portfolio-asset/portfolio-asset.module';
 import { PortfolioModule } from './portfolio/portfolio.module';
 import { PrismaModule } from './prisma/prisma.module';
@@ -25,6 +26,7 @@ import { PrismaModule } from './prisma/prisma.module';
     PortfolioModule,
     PortfolioAssetModule,
     GoalModule,
+    MarketDataModule,
   ],
   controllers: [AppController],
   providers: [AppService],
