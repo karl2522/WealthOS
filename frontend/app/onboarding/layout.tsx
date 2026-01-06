@@ -19,6 +19,7 @@ export default function OnboardingLayout({ children }: { children: React.ReactNo
         { number: 1, label: "Create Portfolio" },
         { number: 2, label: "Set Goals" },
         { number: 3, label: "Add Asset" },
+        { number: 4, label: "Review" },
     ];
 
     return (

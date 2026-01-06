@@ -92,11 +92,8 @@ export default function Step3Page() {
                 description: `${data.symbol} has been added to your portfolio.`,
             });
 
-            // Clear onboarding data
-            localStorage.removeItem("onboarding_portfolio_id");
-
-            // Redirect to dashboard
-            router.push("/dashboard");
+            // Navigate to confirmation screen (Step 4)
+            router.push("/onboarding/step4");
         } catch (error: any) {
             console.error("Failed to add asset:", error);
             toast({
@@ -150,7 +147,7 @@ export default function Step3Page() {
                                 <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                             </Button>
                         </PopoverTrigger>
-                        <PopoverContent className="w-full p-0">
+                        <PopoverContent className="w-[--radix-popover-trigger-width] p-0" align="start">
                             <Command>
                                 <CommandInput placeholder="Search symbol..." />
                                 <CommandEmpty>No symbol found.</CommandEmpty>
@@ -160,6 +157,7 @@ export default function Step3Page() {
                                             key={symbol}
                                             value={symbol}
                                             onSelect={() => handleSymbolSelect(symbol)}
+                                            className="cursor-pointer"
                                         >
                                             <Check
                                                 className={cn(
