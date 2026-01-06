@@ -17,7 +17,7 @@ interface Goal {
     id: string;
     name: string;
     targetAmount: number;
-    deadline: string;
+    deadline?: string;
 }
 
 interface Asset {
@@ -198,8 +198,8 @@ export default function Step4Page() {
                                 {goal.name}
                             </p>
                             <p className="text-sm text-gray-600 dark:text-gray-400">
-                                Target: ${goal.targetAmount.toLocaleString()} by{" "}
-                                {new Date(goal.deadline).toLocaleDateString()}
+                                Target: ${goal.targetAmount.toLocaleString()}
+                                {goal.deadline && ` by ${new Date(goal.deadline).toLocaleDateString()}`}
                             </p>
                         </div>
                     ) : (

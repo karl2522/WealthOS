@@ -39,12 +39,16 @@ interface Portfolio {
 
 interface PortfolioContextType {
     portfolio: Portfolio | null;
+    portfolios: Portfolio[]; // All available portfolios
     assets: PortfolioAsset[];
     goals: Goal[];
     totalValue: number;
     totalPL: number;
     isLoading: boolean;
     refreshPortfolio: () => Promise<void>;
+    selectPortfolio: (portfolioId: string) => void;
+    updatePortfolio: (id: string, data: Partial<Portfolio>) => Promise<void>;
+    deletePortfolio: (id: string) => Promise<void>;
     addAsset: (asset: any) => Promise<void>;
     removeAsset: (assetId: string) => Promise<void>;
 }
@@ -54,9 +58,10 @@ const PortfolioContext = createContext<PortfolioContextType | undefined>(undefin
 export function PortfolioProvider({ children }: { children: ReactNode }) {
     const { user } = useAuth();
     const [portfolio, setPortfolio] = useState<Portfolio | null>(null);
+    const [portfolios, setPortfolios] = useState<Portfolio[]>([]);
     const [isLoading, setIsLoading] = useState(true);
 
-    const fetchPortfolio = async () => {
+    const fetchPortfolios = async () => {
         if (!user) {
             setIsLoading(false);
             return;
@@ -69,23 +74,44 @@ export function PortfolioProvider({ children }: { children: ReactNode }) {
             );
 
             if (response.data.length > 0) {
-                // Get the primary portfolio (or first one)
-                const primaryPortfolio = response.data.find((p: Portfolio) => p.isPrimary) || response.data[0];
-                setPortfolio(primaryPortfolio);
+                const fetchedPortfolios = response.data;
+                setPortfolios(fetchedPortfolios);
+
+                // Check localStorage for saved selection
+                const savedId = localStorage.getItem(`selectedPortfolio_${user.id}`);
+                const found = savedId ? fetchedPortfolios.find((p: Portfolio) => p.id === savedId) : null;
+
+                // Fallback to primary or first
+                const active = found || fetchedPortfolios.find((p: Portfolio) => p.isPrimary) || fetchedPortfolios[0];
+
+                setPortfolio(active);
+                // Ensure storage is synced if we fell back
+                if (active.id !== savedId) {
+                    localStorage.setItem(`selectedPortfolio_${user.id}`, active.id);
+                }
             }
         } catch (error) {
-            console.error("Failed to fetch portfolio:", error);
+            console.error("Failed to fetch portfolios:", error);
         } finally {
             setIsLoading(false);
         }
     };
 
     useEffect(() => {
-        fetchPortfolio();
+        fetchPortfolios();
     }, [user]);
 
+    const selectPortfolio = (portfolioId: string) => {
+        const found = portfolios.find(p => p.id === portfolioId);
+        if (found && user) {
+            setPortfolio(found);
+            localStorage.setItem(`selectedPortfolio_${user.id}`, found.id);
+        }
+    };
+
     const refreshPortfolio = async () => {
-        await fetchPortfolio();
+        // Just re-fetch everything to be safe and keep selection logic consistent
+        await fetchPortfolios();
     };
 
     const addAsset = async (assetData: any) => {
@@ -121,14 +147,68 @@ export function PortfolioProvider({ children }: { children: ReactNode }) {
         }
     };
 
+    const updatePortfolio = async (id: string, data: Partial<Portfolio>) => {
+        try {
+            const response = await axios.patch(
+                `${process.env.NEXT_PUBLIC_API_URL}/portfolio/${id}`,
+                data,
+                { withCredentials: true }
+            );
+
+            const updated = response.data;
+
+            // Update in list
+            setPortfolios(prev => prev.map(p => p.id === id ? { ...p, ...updated } : p));
+
+            // Update active if it matches
+            if (portfolio?.id === id) {
+                setPortfolio(prev => prev ? { ...prev, ...updated } : null);
+            }
+        } catch (error) {
+            console.error("Failed to update portfolio:", error);
+            throw error;
+        }
+    };
+
+    const deletePortfolio = async (id: string) => {
+        try {
+            await axios.delete(
+                `${process.env.NEXT_PUBLIC_API_URL}/portfolio/${id}`,
+                { withCredentials: true }
+            );
+
+            // Remove from list
+            const remaining = portfolios.filter(p => p.id !== id);
+            setPortfolios(remaining);
+
+            // If we deleted the active one, switch to another
+            if (portfolio?.id === id) {
+                const next = remaining[0] || null;
+                setPortfolio(next);
+                if (next && user?.id) {
+                    localStorage.setItem(`selectedPortfolio_${user.id}`, next.id);
+                } else if (user?.id) {
+                    localStorage.removeItem(`selectedPortfolio_${user.id}`);
+                }
+            }
+        } catch (error) {
+            console.error("Failed to delete portfolio:", error);
+            throw error;
+        }
+    };
+
     const value: PortfolioContextType = {
         portfolio,
+        portfolios,
         assets: portfolio?.assets || [],
         goals: portfolio?.goals || [],
         totalValue: portfolio?.totalValue || 0,
         totalPL: portfolio?.totalPL || 0,
         isLoading,
         refreshPortfolio,
+        selectPortfolio,
+        updatePortfolio,
+        deletePortfolio,
         addAsset,
         removeAsset,
     };

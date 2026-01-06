@@ -6,6 +6,7 @@ import {
     Param,
     Patch,
     Post,
+    Query,
     Request,
     UseGuards,
 } from '@nestjs/common';
@@ -18,6 +19,12 @@ import { PortfolioAssetService } from './portfolio-asset.service';
 @UseGuards(JwtAuthGuard)
 export class PortfolioAssetController {
     constructor(private readonly portfolioAssetService: PortfolioAssetService) { }
+
+    @Get('debug-price')
+    async debugPrice(@Query('symbol') symbol: string, @Query('currency') currency: string) {
+        // Temporary debug endpoint
+        return this.portfolioAssetService.debugGetPrice(symbol, currency);
+    }
 
     @Post()
     create(

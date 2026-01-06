@@ -15,8 +15,11 @@ import * as z from "zod";
 
 const goalSchema = z.object({
     name: z.string().min(1, "Goal name is required"),
-    targetAmount: z.number().positive("Target amount must be positive"),
-    monthlyContribution: z.number().positive().optional(),
+    targetAmount: z.number({ invalid_type_error: "Target amount is required" }).positive("Target amount must be positive"),
+    monthlyContribution: z.preprocess(
+        (val) => (typeof val === 'number' && isNaN(val) ? undefined : val),
+        z.number().positive().optional()
+    ),
 });
 
 type GoalFormData = z.infer<typeof goalSchema>;
