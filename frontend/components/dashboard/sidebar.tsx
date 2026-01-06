@@ -12,7 +12,7 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from "@/components/ui/sidebar"
-import { Bell, LayoutDashboard, PieChart, Settings, ShieldCheck, TrendingUp, Wallet } from "lucide-react"
+import { Bell, LayoutDashboard, Lightbulb, PieChart, Settings, ShieldCheck, TrendingUp, Wallet } from "lucide-react"
 import { LogoutDialog } from "./logout-dialog"
 
 const navItems = [
@@ -20,6 +20,7 @@ const navItems = [
     { icon: PieChart, label: "Allocation" },
     { icon: Wallet, label: "Holdings" },
     { icon: TrendingUp, label: "Performance" },
+    { icon: Lightbulb, label: "Insights" },
 ]
 
 const accountItems = [

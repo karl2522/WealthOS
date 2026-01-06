@@ -4,6 +4,9 @@ import { ThrottlerModule } from '@nestjs/throttler';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
+import { GoalModule } from './goal/goal.module';
+import { PortfolioAssetModule } from './portfolio-asset/portfolio-asset.module';
+import { PortfolioModule } from './portfolio/portfolio.module';
 import { PrismaModule } from './prisma/prisma.module';
 
 @Module({
@@ -19,8 +22,12 @@ import { PrismaModule } from './prisma/prisma.module';
     ]),
     PrismaModule,
     AuthModule,
+    PortfolioModule,
+    PortfolioAssetModule,
+    GoalModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
 export class AppModule { }
+

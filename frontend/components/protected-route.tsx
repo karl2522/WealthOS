@@ -1,13 +1,15 @@
 'use client';
 
 import { useAuth } from '@/contexts/auth-provider';
-import { Shield } from 'lucide-react';
-import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import axios from 'axios';
+import { usePathname, useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 export function ProtectedRoute({ children }: { children: React.ReactNode }) {
     const { user, loading } = useAuth();
     const router = useRouter();
+    const pathname = usePathname();
+    const [portfolioLoading, setPortfolioLoading] = useState(true);
 
     useEffect(() => {
         if (!loading && !user) {
@@ -15,30 +17,43 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
         }
     }, [user, loading, router]);
 
-    if (loading) {
-        return (
-            <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50/30">
-                <div className="flex flex-col items-center gap-6">
-                    {/* Animated logo */}
-                    <div className="relative">
-                        <div className="absolute inset-0 animate-ping">
-                            <div className="h-16 w-16 rounded-xl bg-blue-600/20"></div>
-                        </div>
-                        <div className="relative flex h-16 w-16 items-center justify-center rounded-xl bg-blue-600 text-white shadow-xl animate-pulse">
-                            <Shield className="h-9 w-9" />
-                        </div>
-                    </div>
+    useEffect(() => {
+        async function checkPortfolio() {
+            // Skip portfolio check if already on onboarding pages
+            if (pathname?.startsWith('/onboarding')) {
+                setPortfolioLoading(false);
+                return;
+            }
 
-                    {/* Loading text */}
-                    <div className="text-center space-y-2">
-                        <h3 className="text-lg font-semibold text-gray-900">Loading WealthOS</h3>
-                        <div className="flex items-center gap-1">
-                            <div className="h-1.5 w-1.5 rounded-full bg-blue-600 animate-bounce" style={{ animationDelay: '0ms' }}></div>
-                            <div className="h-1.5 w-1.5 rounded-full bg-blue-600 animate-bounce" style={{ animationDelay: '150ms' }}></div>
-                            <div className="h-1.5 w-1.5 rounded-full bg-blue-600 animate-bounce" style={{ animationDelay: '300ms' }}></div>
-                        </div>
-                    </div>
-                </div>
+            if (!user) return;
+
+            try {
+                const response = await axios.get(
+                    `${process.env.NEXT_PUBLIC_API_URL}/portfolio`,
+                    { withCredentials: true }
+                );
+
+                if (response.data.length === 0) {
+                    // No portfolios found, redirect to onboarding
+                    router.push('/onboarding/step1');
+                } else {
+                    setPortfolioLoading(false);
+                }
+            } catch (error) {
+                console.error('Failed to fetch portfolios:', error);
+                setPortfolioLoading(false);
+            }
+        }
+
+        if (!loading && user) {
+            checkPortfolio();
+        }
+    }, [user, loading, router, pathname]);
+
+    if (loading || portfolioLoading) {
+        return (
+            <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+                <div className="h-12 w-12 animate-spin rounded-full border-4 border-gray-200 border-t-blue-600 dark:border-gray-700 dark:border-t-blue-500"></div>
             </div>
         );
     }
@@ -49,3 +64,4 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
 
     return <>{children}</>;
 }
+

@@ -20,9 +20,71 @@ model User {
   isEmailVerified Boolean @default(false)
   refreshToken    String?
   
+  portfolios Portfolio[]
+  
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@index([email])
   @@map("users")
+}
+
+model Portfolio {
+  id           String   @id @default(uuid())
+  name         String
+  currency     String   @default("USD")
+  riskProfile  String?
+  isPrimary    Boolean  @default(true)
+  
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  assets       PortfolioAsset[]
+  goals        Goal[]
+  
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  
+  @@index([userId])
+  @@map("portfolios")
+}
+
+model PortfolioAsset {
+  id          String   @id @default(uuid())
+  portfolioId String
+  portfolio   Portfolio @relation(fields: [portfolioId], references: [id], onDelete: Cascade)
+  
+  symbol      String
+  type        String
+  quantity    Decimal  @db.Decimal(18, 8)
+  avgPrice    Decimal? @db.Decimal(18, 4)
+  
+  currentPrice     Decimal?  @db.Decimal(18, 4)
+  lastPriceUpdate  DateTime?
+  
+  createdVia  String?  @default("dashboard")
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@unique([portfolioId, symbol, type])
+  @@index([portfolioId])
+  @@index([symbol])
+  @@map("portfolio_assets")
+}
+
+model Goal {
+  id                  String   @id @default(uuid())
+  portfolioId         String
+  portfolio           Portfolio @relation(fields: [portfolioId], references: [id], onDelete: Cascade)
+  
+  name                String
+  targetAmount        Decimal  @db.Decimal(18, 2)
+  monthlyContribution Decimal? @db.Decimal(18, 2)
+  
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+  
+  @@index([portfolioId])
+  @@map("goals")
 }
