@@ -51,6 +51,7 @@ interface PortfolioContextType {
     deletePortfolio: (id: string) => Promise<void>;
     addAsset: (asset: any) => Promise<void>;
     removeAsset: (assetId: string) => Promise<void>;
+    updateAsset: (assetId: string, data: any) => Promise<void>;
 }
 
 const PortfolioContext = createContext<PortfolioContextType | undefined>(undefined);
@@ -147,6 +148,23 @@ export function PortfolioProvider({ children }: { children: ReactNode }) {
         }
     };
 
+    const updateAsset = async (assetId: string, data: any) => {
+        if (!portfolio) return;
+
+        try {
+            await axios.patch(
+                `${process.env.NEXT_PUBLIC_API_URL}/portfolio/${portfolio.id}/assets/${assetId}`,
+                data,
+                { withCredentials: true }
+            );
+
+            await refreshPortfolio();
+        } catch (error) {
+            console.error("Failed to update asset:", error);
+            throw error;
+        }
+    };
+
     const updatePortfolio = async (id: string, data: Partial<Portfolio>) => {
         try {
             const response = await axios.patch(
@@ -211,6 +229,7 @@ export function PortfolioProvider({ children }: { children: ReactNode }) {
         deletePortfolio,
         addAsset,
         removeAsset,
+        updateAsset,
     };
 
     return <PortfolioContext.Provider value={value}>{children}</PortfolioContext.Provider>;
