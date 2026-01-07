@@ -1,5 +1,15 @@
 "use client";
 
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -30,6 +40,10 @@ export function HoldingsTable() {
     const [editDialogOpen, setEditDialogOpen] = useState(false);
     const [editingAsset, setEditingAsset] = useState<any | null>(null);
 
+    // Delete State
+    const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+    const [assetToDelete, setAssetToDelete] = useState<{ id: string; symbol: string } | null>(null);
+
     const formatCurrency = (value: number) => {
         return new Intl.NumberFormat("en-US", {
             style: "currency",
@@ -37,13 +51,20 @@ export function HoldingsTable() {
         }).format(value);
     };
 
-    const handleDelete = async (assetId: string, symbol: string) => {
-        setDeletingAssetId(assetId);
+    const handleDeleteClick = (asset: { id: string; symbol: string }) => {
+        setAssetToDelete(asset);
+        setDeleteDialogOpen(true);
+    };
+
+    const confirmDelete = async () => {
+        if (!assetToDelete) return;
+
+        setDeletingAssetId(assetToDelete.id);
         try {
-            await removeAsset(assetId);
+            await removeAsset(assetToDelete.id);
             toast({
                 title: "Asset removed",
-                description: `${symbol} has been removed from your portfolio.`,
+                description: `${assetToDelete.symbol} has been removed from your portfolio.`,
             });
         } catch (error) {
             toast({
@@ -53,6 +74,8 @@ export function HoldingsTable() {
             });
         } finally {
             setDeletingAssetId(null);
+            setDeleteDialogOpen(false);
+            setAssetToDelete(null);
         }
     };
 
@@ -286,7 +309,7 @@ export function HoldingsTable() {
                                                                 variant="ghost"
                                                                 size="icon"
                                                                 className="h-8 w-8 text-rose-600 hover:text-rose-700 hover:bg-rose-50 dark:hover:bg-rose-900/20"
-                                                                onClick={() => handleDelete(asset.id, asset.symbol)}
+                                                                onClick={() => handleDeleteClick(asset)}
                                                                 disabled={deletingAssetId === asset.id}
                                                             >
                                                                 <Trash2 className="h-3.5 w-3.5" />
@@ -356,7 +379,7 @@ export function HoldingsTable() {
                                                     variant="outline"
                                                     size="sm"
                                                     className="flex-1 text-rose-600 border-rose-200 hover:bg-rose-50 dark:border-rose-900 dark:hover:bg-rose-900/20"
-                                                    onClick={() => handleDelete(asset.id, asset.symbol)}
+                                                    onClick={() => handleDeleteClick(asset)}
                                                     disabled={deletingAssetId === asset.id}
                                                 >
                                                     <Trash2 className="h-3.5 w-3.5 mr-2" />
@@ -373,7 +396,24 @@ export function HoldingsTable() {
             </Card>
 
             <EditAssetDialog open={editDialogOpen} onOpenChange={setEditDialogOpen} asset={editingAsset} />
+
+            <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            This will permanently remove <span className="font-bold text-foreground">{assetToDelete?.symbol}</span> from your portfolio.
+                            This action cannot be undone.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction onClick={confirmDelete} className="bg-rose-600 hover:bg-rose-700">
+                            Delete Asset
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </div>
     );
 }
-
