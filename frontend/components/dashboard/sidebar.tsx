@@ -18,11 +18,11 @@ import { LogoutDialog } from "./logout-dialog"
 import { PortfolioSwitcher } from "./portfolio-switcher"
 
 const navItems = [
-    { icon: LayoutDashboard, label: "Overview", active: true },
-    { icon: PieChart, label: "Allocation" },
-    { icon: Wallet, label: "Holdings" },
-    { icon: TrendingUp, label: "Performance" },
-    { icon: Lightbulb, label: "Insights" },
+    { icon: LayoutDashboard, label: "Overview", href: "/dashboard" },
+    { icon: PieChart, label: "Allocation", href: "/dashboard#allocation" },
+    { icon: Wallet, label: "Holdings", href: "/holdings" },
+    { icon: TrendingUp, label: "Performance", href: "/dashboard#performance" },
+    { icon: Lightbulb, label: "Insights", href: "/dashboard#insights" },
 ]
 
 const accountItems = [
@@ -43,8 +43,8 @@ export function DashboardSidebar() {
                         <SidebarMenu>
                             {navItems.map((item) => (
                                 <SidebarMenuItem key={item.label}>
-                                    <SidebarMenuButton asChild isActive={item.active}>
-                                        <a href="#" className="flex items-center gap-3">
+                                    <SidebarMenuButton asChild isActive={typeof window !== 'undefined' && window.location.pathname === item.href}>
+                                        <a href={item.href} className="flex items-center gap-3">
                                             <item.icon className="size-4" />
                                             <span>{item.label}</span>
                                         </a>

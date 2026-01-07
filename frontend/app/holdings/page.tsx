@@ -1,11 +1,9 @@
 "use client";
 
 import { AddAssetDialog } from "@/components/dashboard/add-asset-dialog";
-import { AssetAllocation } from "@/components/dashboard/asset-allocation";
+import { HoldingsSummary } from "@/components/dashboard/holdings-summary";
 import { HoldingsTable } from "@/components/dashboard/holdings-table";
 import { MobileNav } from "@/components/dashboard/mobile-nav";
-import { PerformanceChart } from "@/components/dashboard/performance-chart";
-import { PortfolioSummary } from "@/components/dashboard/portfolio-summary";
 import { DashboardSidebar } from "@/components/dashboard/sidebar";
 import { ProtectedRoute } from "@/components/protected-route";
 import { Button } from "@/components/ui/button";
@@ -14,7 +12,7 @@ import { PortfolioProvider } from "@/contexts/portfolio-context";
 import { Plus } from "lucide-react";
 import { useState } from "react";
 
-export default function DashboardPage() {
+export default function HoldingsPage() {
     const [addAssetOpen, setAddAssetOpen] = useState(false);
 
     return (
@@ -27,32 +25,21 @@ export default function DashboardPage() {
                             <SidebarTrigger className="md:hidden" />
                             <div className="flex flex-1 items-center justify-between">
                                 <div>
-                                    <h1 className="text-lg font-bold md:text-xl">Dashboard</h1>
-                                    <p className="text-xs text-muted-foreground hidden sm:block">Overview of your portfolio performance</p>
+                                    <h1 className="text-lg font-bold md:text-xl">Holdings</h1>
+                                    <p className="text-xs text-muted-foreground hidden sm:block">All assets in your portfolio</p>
                                 </div>
                                 <div className="flex items-center gap-4">
                                     <Button onClick={() => setAddAssetOpen(true)} size="sm">
-                                        <Plus className="h-4 w-4 mr-2" />
+                                        <Plus className="h-4 w-4 sm:mr-2" />
                                         <span className="hidden sm:inline">Add Asset</span>
-                                        <span className="sm:hidden">Add</span>
                                     </Button>
                                 </div>
                             </div>
                         </header>
 
                         <main className="flex flex-col gap-6 p-4 md:gap-8 md:p-8">
-                            {/* Top Summary Cards */}
-                            <PortfolioSummary />
-
-                            <div className="grid gap-6 lg:grid-cols-3">
-                                {/* Performance Chart - Spans 2 cols on large screens */}
-                                <div className="lg:col-span-2">
-                                    <PerformanceChart />
-                                </div>
-
-                                {/* Asset Allocation */}
-                                <AssetAllocation />
-                            </div>
+                            {/* Portfolio Summary Strip */}
+                            <HoldingsSummary />
 
                             {/* Holdings Table */}
                             <HoldingsTable />
@@ -69,4 +56,3 @@ export default function DashboardPage() {
         </ProtectedRoute>
     );
 }
-
