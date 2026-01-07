@@ -26,7 +26,10 @@ export default function DashboardPage() {
                         <header className="sticky top-0 z-10 flex h-16 items-center gap-4 border-b bg-sidebar px-4 backdrop-blur md:px-6">
                             <SidebarTrigger className="md:hidden" />
                             <div className="flex flex-1 items-center justify-between">
-                                <h1 className="text-lg font-bold md:text-xl">Dashboard</h1>
+                                <div>
+                                    <h1 className="text-lg font-bold md:text-xl">Dashboard</h1>
+                                    <p className="text-xs text-muted-foreground hidden sm:block">Overview of your portfolio performance</p>
+                                </div>
                                 <div className="flex items-center gap-4">
                                     <Button onClick={() => setAddAssetOpen(true)} size="sm">
                                         <Plus className="h-4 w-4 mr-2" />
