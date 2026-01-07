@@ -50,12 +50,10 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
         }
     }, [user, loading, router, pathname]);
 
-    if (loading || portfolioLoading) {
-        return (
-            <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
-                <div className="h-12 w-12 animate-spin rounded-full border-4 border-gray-200 border-t-blue-600 dark:border-gray-700 dark:border-t-blue-500"></div>
-            </div>
-        );
+    if (loading) {
+        // Return children immediately to allow skeletons to show
+        // The useEffect above handles redirection if auth fails
+        return <>{children}</>;
     }
 
     if (!user) {
