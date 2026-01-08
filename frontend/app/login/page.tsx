@@ -83,12 +83,7 @@ export default function LoginPage() {
                                 />
                             </div>
                             <div className="space-y-2">
-                                <div className="flex items-center justify-between">
-                                    <Label htmlFor="password" className="text-sm font-medium">Password</Label>
-                                    <Link href="/forgot-password" className="text-xs text-blue-600 hover:text-blue-700 hover:underline font-medium">
-                                        Forgot password?
-                                    </Link>
-                                </div>
+                                <Label htmlFor="password" className="text-sm font-medium">Password</Label>
                                 <div className="relative">
                                     <Input
                                         id="password"
@@ -112,6 +107,11 @@ export default function LoginPage() {
                                             <Eye className="h-4 w-4" />
                                         )}
                                     </button>
+                                </div>
+                                <div className="flex justify-end">
+                                    <Link href="/forgot-password" className="text-xs text-blue-600 hover:text-blue-700 hover:underline font-medium">
+                                        Forgot password?
+                                    </Link>
                                 </div>
                             </div>
                         </CardContent>
