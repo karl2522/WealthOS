@@ -2,6 +2,8 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
+import { Skeleton } from "@/components/ui/skeleton"
+import { usePortfolio } from "@/contexts/portfolio-context"
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, XAxis, YAxis } from "recharts"
 
 const data = [
@@ -20,6 +22,22 @@ const data = [
 ]
 
 export function PerformanceChart() {
+    const { isLoading } = usePortfolio();
+
+    if (isLoading) {
+        return (
+            <Card className="h-full shadow-md bg-sidebar">
+                <CardHeader className="space-y-2">
+                    <Skeleton className="h-5 w-[140px]" />
+                    <Skeleton className="h-4 w-[250px]" />
+                </CardHeader>
+                <CardContent className="h-[300px] md:h-[350px]">
+                    <Skeleton className="h-full w-full rounded-md" />
+                </CardContent>
+            </Card>
+        )
+    }
+
     return (
         <Card className="h-full shadow-md bg-sidebar">
             <CardHeader className="flex flex-row items-center justify-between space-y-0">

@@ -57,12 +57,14 @@ interface PortfolioContextType {
 const PortfolioContext = createContext<PortfolioContextType | undefined>(undefined);
 
 export function PortfolioProvider({ children }: { children: ReactNode }) {
-    const { user } = useAuth();
+    const { user, loading: authLoading } = useAuth();
     const [portfolio, setPortfolio] = useState<Portfolio | null>(null);
     const [portfolios, setPortfolios] = useState<Portfolio[]>([]);
     const [isLoading, setIsLoading] = useState(true);
 
     const fetchPortfolios = async () => {
+        if (authLoading) return;
+
         if (!user) {
             setIsLoading(false);
             return;
@@ -100,7 +102,7 @@ export function PortfolioProvider({ children }: { children: ReactNode }) {
 
     useEffect(() => {
         fetchPortfolios();
-    }, [user]);
+    }, [user, authLoading]);
 
     const selectPortfolio = (portfolioId: string) => {
         const found = portfolios.find(p => p.id === portfolioId);

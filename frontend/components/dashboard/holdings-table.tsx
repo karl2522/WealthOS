@@ -198,17 +198,33 @@ export function HoldingsTable() {
                 </CardHeader>
                 <CardContent className="p-0">
                     {isLoading ? (
-                        <div className="p-6 space-y-4">
-                            {[1, 2, 3].map((i) => (
-                                <div key={i} className="flex items-center gap-4">
-                                    <Skeleton className="h-12 w-12" />
-                                    <div className="flex-1">
-                                        <Skeleton className="h-4 w-24 mb-2" />
-                                        <Skeleton className="h-3 w-32" />
+                        <div className="space-y-4">
+                            {/* Header Skeleton */}
+                            <div className="hidden md:flex items-center justify-between p-4 border-b bg-muted/40">
+                                {[1, 2, 3, 4, 5].map((i) => (
+                                    <Skeleton key={i} className="h-4 w-24" />
+                                ))}
+                            </div>
+
+                            {/* Row Skeletons */}
+                            <div className="p-4 space-y-4">
+                                {[1, 2, 3, 4, 5].map((i) => (
+                                    <div key={i} className="flex items-center justify-between gap-4">
+                                        <div className="flex items-center gap-3 flex-1">
+                                            <Skeleton className="h-10 w-10 rounded-full" />
+                                            <div className="space-y-2">
+                                                <Skeleton className="h-4 w-20" />
+                                                <Skeleton className="h-3 w-12" />
+                                            </div>
+                                        </div>
+                                        {/* Hidden on mobile, shown on desktop roughly matching columns */}
+                                        <Skeleton className="hidden md:block h-4 w-16" />
+                                        <Skeleton className="hidden md:block h-4 w-20" />
+                                        <Skeleton className="hidden md:block h-4 w-24" />
+                                        <Skeleton className="h-4 w-20" />
                                     </div>
-                                    <Skeleton className="h-4 w-20" />
-                                </div>
-                            ))}
+                                ))}
+                            </div>
                         </div>
                     ) : filteredAndSortedAssets.length === 0 ? (
                         <div className="flex flex-col items-center justify-center py-16 px-4">
@@ -414,6 +430,6 @@ export function HoldingsTable() {
                     </AlertDialogFooter>
                 </AlertDialogContent>
             </AlertDialog>
-        </div>
+        </div >
     );
 }
