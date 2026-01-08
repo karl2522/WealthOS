@@ -41,12 +41,33 @@ model Portfolio {
   
   assets       PortfolioAsset[]
   goals        Goal[]
+  snapshots    PortfolioSnapshot[]
   
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
   
   @@index([userId])
   @@map("portfolios")
+}
+
+model PortfolioSnapshot {
+  id            String   @id @default(uuid())
+  portfolioId   String
+  portfolio     Portfolio @relation(fields: [portfolioId], references: [id], onDelete: Cascade)
+  
+  date          DateTime // Normalized to 00:00:00
+  
+  totalValue    Decimal  @db.Decimal(18, 2)
+  totalInvested Decimal  @db.Decimal(18, 2)
+  totalPL       Decimal  @db.Decimal(18, 2)
+  returnPct     Decimal  @db.Decimal(10, 4) // e.g. 15.55%
+  currency      String   @default("USD")
+  
+  createdAt     DateTime @default(now())
+  
+  @@unique([portfolioId, date])
+  @@index([portfolioId])
+  @@map("portfolio_snapshots")
 }
 
 model PortfolioAsset {

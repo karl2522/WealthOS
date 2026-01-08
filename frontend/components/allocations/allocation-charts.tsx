@@ -1,11 +1,30 @@
 "use client"
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Skeleton } from "@/components/ui/skeleton"
 import { usePortfolio } from "@/contexts/portfolio-context"
 import { Bar, BarChart, Cell, Legend, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts"
 
 export function AllocationCharts() {
-    const { assets, totalValue } = usePortfolio()
+    const { assets, totalValue, isLoading } = usePortfolio()
+
+    if (isLoading) {
+        return (
+            <div className="grid gap-4 md:grid-cols-2">
+                {[1, 2].map((i) => (
+                    <Card key={i} className="flex flex-col">
+                        <CardHeader>
+                            <Skeleton className="h-6 w-32 mb-2" />
+                            <Skeleton className="h-4 w-48" />
+                        </CardHeader>
+                        <CardContent className="flex-1">
+                            <Skeleton className="h-[300px] w-full rounded-md" />
+                        </CardContent>
+                    </Card>
+                ))}
+            </div>
+        )
+    }
 
     // TYPE ALLOCATION (Donut)
     const typeMap = new Map<string, number>()

@@ -23,7 +23,7 @@ const navItems = [
     { icon: LayoutDashboard, label: "Overview", href: "/dashboard" },
     { icon: PieChart, label: "Allocation", href: "/allocations" },
     { icon: Wallet, label: "Holdings", href: "/holdings" },
-    { icon: TrendingUp, label: "Performance", href: "/dashboard#performance" },
+    { icon: TrendingUp, label: "Performance", href: "/performance" },
     { icon: Lightbulb, label: "Insights", href: "/dashboard#insights" },
 ]
 

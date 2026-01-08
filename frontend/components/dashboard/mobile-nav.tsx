@@ -6,10 +6,10 @@ export function MobileNav() {
     const pathname = usePathname()
 
     const items = [
-        { icon: LayoutDashboard, label: "Overview", href: "/dashboard" },
-        { icon: PieChart, label: "Allocation", href: "/allocations" },
-        { icon: Wallet, label: "Holdings", href: "/holdings" },
-        { icon: TrendingUp, label: "Performance", href: "/dashboard#performance" },
+        { icon: LayoutDashboard, label: "Overview", href: "/dashboard", active: pathname === "/dashboard" },
+        { icon: PieChart, label: "Allocation", href: "/allocations", active: pathname === "/allocations" },
+        { icon: Wallet, label: "Holdings", href: "/holdings", active: pathname === "/holdings" },
+        { icon: TrendingUp, label: "Performance", href: "/performance", active: pathname === "/performance" },
     ]
 
     return (

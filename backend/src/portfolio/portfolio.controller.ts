@@ -6,6 +6,7 @@ import {
     Param,
     Patch,
     Post,
+    Query,
     Request,
     UseGuards,
 } from '@nestjs/common';
@@ -27,6 +28,12 @@ export class PortfolioController {
     @Get()
     findAll(@Request() req) {
         return this.portfolioService.findAll(req.user.userId);
+    }
+
+    @Get(':id/history')
+    async getHistory(@Param('id') id: string, @Query('range') range: string, @Request() req) {
+        await this.portfolioService.findOne(id, req.user.userId);
+        return this.portfolioService.getHistory(id, range);
     }
 
     @Get(':id')

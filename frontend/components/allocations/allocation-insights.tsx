@@ -1,9 +1,28 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Skeleton } from "@/components/ui/skeleton"
 import { usePortfolio } from "@/contexts/portfolio-context"
 import { Lightbulb } from "lucide-react"
 
 export function AllocationInsightsPanel() {
-    const { assets, totalValue } = usePortfolio()
+    const { assets, totalValue, isLoading } = usePortfolio()
+
+    if (isLoading) {
+        return (
+            <Card className="bg-blue-50/50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800">
+                <CardHeader className="flex flex-row items-center gap-2 pb-2">
+                    <Skeleton className="h-5 w-5 rounded-full" />
+                    <Skeleton className="h-5 w-32" />
+                </CardHeader>
+                <CardContent>
+                    <div className="space-y-3">
+                        <Skeleton className="h-4 w-full" />
+                        <Skeleton className="h-4 w-[90%]" />
+                        <Skeleton className="h-4 w-[80%]" />
+                    </div>
+                </CardContent>
+            </Card>
+        )
+    }
 
     const insights: string[] = []
 
