@@ -24,7 +24,7 @@ const navItems = [
     { icon: PieChart, label: "Allocation", href: "/allocations" },
     { icon: Wallet, label: "Holdings", href: "/holdings" },
     { icon: TrendingUp, label: "Performance", href: "/performance" },
-    { icon: Lightbulb, label: "Insights", href: "/dashboard#insights" },
+    { icon: Lightbulb, label: "Insights", href: "/insights" },
 ]
 
 const accountItems = [

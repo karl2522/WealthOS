@@ -17,6 +17,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "WealthOS - Professional Portfolio Tracking",
   description: "Build wealth with clarity. Professional-grade portfolio tracking and long-term investment insights.",
+  icons: {
+    icon: '/logo.png',
+  },
 };
 
 export default function RootLayout({

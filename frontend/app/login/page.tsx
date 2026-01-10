@@ -6,7 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/contexts/auth-provider";
 import { useToast } from "@/hooks/use-toast";
-import { ArrowLeft, Eye, EyeOff, Loader2, Shield } from "lucide-react";
+import { ArrowLeft, Eye, EyeOff, Loader2 } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { FormEvent, useState } from "react";
 
@@ -54,8 +55,14 @@ export default function LoginPage() {
             </Link>
             <div className="w-full max-w-[min(420px,90vw)] space-y-8 relative z-10">
                 <div className="flex flex-col items-center gap-3 text-center">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-600 text-white shadow-lg">
-                        <Shield className="h-7 w-7" />
+                    <div className="relative w-12 h-12 bg-none overflow-hidden mb-1">
+                        <Image
+                            src="/logo.svg"
+                            alt="WealthOS Logo"
+                            fill
+                            className="object-contain"
+                            priority
+                        />
                     </div>
                     <div className="space-y-1">
                         <h1 className="text-3xl font-bold tracking-tight">WealthOS</h1>

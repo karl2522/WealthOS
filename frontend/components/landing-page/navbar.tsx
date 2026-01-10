@@ -5,23 +5,39 @@ import { useAuth } from "@/contexts/auth-provider";
 import { LayoutDashboard } from "lucide-react";
 import Link from "next/link";
 
+import Image from "next/image";
+
 export default function Navbar() {
     const { user, loading } = useAuth();
+
+    const scrollToSection = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
+        e.preventDefault();
+        document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+    };
 
     return (
         <header className="fixed top-0 w-full z-50 px-6 py-4 flex items-center justify-center mix-blend-difference text-white">
             <div className="w-full max-w-7xl flex items-center justify-between">
-                <Link href="/" className="text-xl font-bold tracking-tight cursor-pointer">
-                    WealthOS
+                <Link href="/" onClick={(e) => scrollToSection(e, 'hero')} className="flex items-center gap-2 cursor-pointer">
+                    <div className="relative w-8 h-8 rounded-md overflow-hidden">
+                        <Image
+                            src="/logo.png"
+                            alt="WealthOS Logo"
+                            fill
+                            className="object-cover"
+                            priority
+                        />
+                    </div>
+                    <span className="text-xl font-bold tracking-tight">WealthOS</span>
                 </Link>
                 <nav className="hidden md:flex items-center gap-8 text-sm font-medium">
-                    <a href="#philosophy" className="hover:opacity-70 transition-opacity">
+                    <a href="#philosophy" onClick={(e) => scrollToSection(e, 'philosophy')} className="hover:opacity-70 transition-opacity">
                         Philosophy
                     </a>
-                    <a href="#features" className="hover:opacity-70 transition-opacity">
+                    <a href="#features" onClick={(e) => scrollToSection(e, 'features')} className="hover:opacity-70 transition-opacity">
                         Features
                     </a>
-                    <a href="#how-it-works" className="hover:opacity-70 transition-opacity">
+                    <a href="#how-it-works" onClick={(e) => scrollToSection(e, 'how-it-works')} className="hover:opacity-70 transition-opacity">
                         How it Works
                     </a>
                 </nav>

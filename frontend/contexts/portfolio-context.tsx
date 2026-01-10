@@ -4,7 +4,7 @@ import axios from "axios";
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
 import { useAuth } from "./auth-provider";
 
-interface PortfolioAsset {
+export interface PortfolioAsset {
     id: string;
     symbol: string;
     type: string;
