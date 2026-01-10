@@ -1,7 +1,8 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import axios from 'axios';
-import NodeCache from 'node-cache';
+import type { Cache } from 'cache-manager';
 import PQueue from 'p-queue';
 import { MarketPriceDto } from './dto/market-price.dto';
 import { RateLimiter } from './utils/rate-limiter';
@@ -9,7 +10,6 @@ import { RateLimiter } from './utils/rate-limiter';
 @Injectable()
 export class MarketDataService {
     private readonly logger = new Logger(MarketDataService.name);
-    private readonly cache: NodeCache;
     private readonly alphaVantageKey: string;
     private readonly useRealPrices: boolean;
 
@@ -19,13 +19,10 @@ export class MarketDataService {
     // Request Queue: Concurrency 1 (process one at a time to respect limiter)
     private readonly queue = new PQueue({ concurrency: 1 });
 
-    constructor(private configService: ConfigService) {
-        this.cache = new NodeCache({
-            stdTTL: 300, // 5 minutes default
-            checkperiod: 60,
-            useClones: false,
-            maxKeys: 1000,
-        });
+    constructor(
+        private configService: ConfigService,
+        @Inject(CACHE_MANAGER) private cacheManager: Cache,
+    ) {
         this.alphaVantageKey = this.configService.get<string>('ALPHA_VANTAGE_KEY') || '';
         // Enable real prices only if key is present matches default "your_api_key_here"
         this.useRealPrices = !!this.alphaVantageKey && this.alphaVantageKey !== 'your_api_key_here';
@@ -36,7 +33,7 @@ export class MarketDataService {
         this.logger.log(`getPrice called for ${symbol} with target ${target}`);
 
         const cacheKey = `price:${type}:${symbol}:${target}`;
-        const cached = this.cache.get<MarketPriceDto>(cacheKey);
+        const cached = await this.cacheManager.get<MarketPriceDto>(cacheKey);
 
         if (cached) {
             this.logger.debug(`Cache hit for ${symbol} in ${target}`);
@@ -51,7 +48,7 @@ export class MarketDataService {
         // Queue the request
         return this.queue.add(async () => {
             // Check cache again just in case it was populated while waiting in queue
-            const cachedAgain = this.cache.get<MarketPriceDto>(cacheKey);
+            const cachedAgain = await this.cacheManager.get<MarketPriceDto>(cacheKey);
             if (cachedAgain) return cachedAgain;
 
             if (type !== 'crypto') {
@@ -88,8 +85,8 @@ export class MarketDataService {
                 }
 
                 if (price) {
-                    const ttl = type === 'crypto' ? 600 : 300;
-                    this.cache.set(cacheKey, price, ttl);
+                    const ttl = type === 'crypto' ? 600 * 1000 : 300 * 1000; // ms
+                    await this.cacheManager.set(cacheKey, price, ttl);
                     return price;
                 }
             } catch (error) {
@@ -106,7 +103,7 @@ export class MarketDataService {
         const key = `rate:${fromCode}:${toCode}`;
 
         // Check cache
-        const cached = this.cache.get<number>(key);
+        const cached = await this.cacheManager.get<number>(key);
         if (cached) return cached;
 
         try {
@@ -117,7 +114,7 @@ export class MarketDataService {
             const rate = response.data.rates[toCode];
 
             if (rate) {
-                this.cache.set(key, rate, 24 * 60 * 60);
+                await this.cacheManager.set(key, rate, 24 * 60 * 60 * 1000); // 24h in ms
                 return rate;
             } else {
                 this.logger.warn(`Rate for ${toCode} not found in API response`);
@@ -130,22 +127,6 @@ export class MarketDataService {
         return 1;
     }
 
-    // ... fetchStockPrice, fetchCryptoPrice, getMockPrice ... 
-    // (Assuming these exist below the replaced block, I'll keep the replace somewhat scoped if possible, 
-    // but the instruction implies replacing the top half. I will double check the file content end line.)
-
-    // Need to make sure I don't delete the private methods. 
-    // The previous view_file only showed up to line 100.
-    // I will use replace logic carefully.
-
-    // Let's use start/end lines from the view.
-    // Line 1 to 90 covers imports and getPrice.
-    // getExchangeRate starts at 91.
-
-    // I need to install 'p-queue' in the next step.
-
-
-    // Private methods below
     private async fetchStockPrice(symbol: string): Promise<MarketPriceDto | null> {
         try {
             const url = `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${symbol}&apikey=${this.alphaVantageKey}`;
@@ -154,9 +135,6 @@ export class MarketDataService {
             // Check for API limit or error
             if (response.data['Note'] || response.data['Information']) {
                 this.logger.warn(`Alpha Vantage API limit or info for ${symbol}: ${JSON.stringify(response.data)}`);
-                // If we hit the limit, we might want to throw to trigger retry or just fail. 
-                // Since Alpha Vantage 429 comes as 200 OK with "Note", axios-retry won't catch it. 
-                // But our rate limiter + queue should prevent this. 
                 return null;
             }
 
