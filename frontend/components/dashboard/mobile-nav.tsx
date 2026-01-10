@@ -1,4 +1,4 @@
-import { LayoutDashboard, PieChart, TrendingUp, Wallet } from "lucide-react"
+import { LayoutDashboard, Lightbulb, PieChart, TrendingUp, Wallet } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 
@@ -10,6 +10,7 @@ export function MobileNav() {
         { icon: PieChart, label: "Allocation", href: "/allocations", active: pathname === "/allocations" },
         { icon: Wallet, label: "Holdings", href: "/holdings", active: pathname === "/holdings" },
         { icon: TrendingUp, label: "Performance", href: "/performance", active: pathname === "/performance" },
+        { icon: Lightbulb, label: "Insights", href: "/insights", active: pathname === "/insights" },
     ]
 
     return (
