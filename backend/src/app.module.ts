@@ -1,6 +1,6 @@
 import { CacheModule } from '@nestjs/cache-manager';
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { redisStore } from 'cache-manager-redis-store';
 import { AppController } from './app.controller';
@@ -19,14 +19,26 @@ import { PrismaModule } from './prisma/prisma.module';
     }),
     CacheModule.registerAsync({
       isGlobal: true,
-      useFactory: async () => ({
-        store: await redisStore({
-          socket: {
-            host: 'localhost',
-            port: 6379,
-          },
-        }),
-      }),
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => {
+        const redisUrl = configService.get<string>('REDIS_URL');
+        if (redisUrl) {
+          return {
+            store: await redisStore({
+              url: redisUrl,
+            }),
+          };
+        }
+        return {
+          store: await redisStore({
+            socket: {
+              host: configService.get<string>('REDIS_HOST') || 'localhost',
+              port: configService.get<number>('REDIS_PORT') || 6379,
+            },
+          }),
+        };
+      },
     }),
     ThrottlerModule.forRoot([
       {
