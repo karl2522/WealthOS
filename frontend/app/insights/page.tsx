@@ -19,81 +19,12 @@ function InsightsContent() {
     // We need 1M (or broader) history for volatility drift
     const { history, isLoading: historyLoading } = usePerformance()
 
+    const isLoading = assetsLoading || historyLoading;
+
     const insights = useMemo(() => {
-        if (assetsLoading || historyLoading) return null;
+        if (isLoading) return null;
         return generateInsights(assets, history);
-    }, [assets, history, assetsLoading, historyLoading]);
-
-    if (assetsLoading || historyLoading) {
-        return (
-            <SidebarInset className="bg-blue-50/50 dark:bg-background pb-16 md:pb-0">
-                <header className="sticky top-0 z-10 flex h-16 items-center gap-4 border-b bg-sidebar px-4 backdrop-blur md:px-6">
-                    <SidebarTrigger className="md:hidden" />
-                    <div className="flex flex-1 items-center justify-between">
-                        <div>
-                            <Skeleton className="h-7 w-32 mb-1" />
-                            <Skeleton className="h-4 w-48 hidden sm:block" />
-                        </div>
-                    </div>
-                </header>
-
-                <main className="flex flex-col gap-6 p-4 md:p-8 w-full">
-                    {/* Alerts Skeleton */}
-                    <div className="space-y-4">
-                        <Skeleton className="h-7 w-24" />
-                        <div className="space-y-3">
-                            <Skeleton className="h-20 w-full rounded-lg" />
-                        </div>
-                    </div>
-
-                    {/* Health Skeleton */}
-                    <div className="space-y-4">
-                        <Skeleton className="h-7 w-32" />
-                        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                            {[1, 2, 3, 4].map((i) => (
-                                <Card key={i}>
-                                    <CardHeader className="p-4 pb-2">
-                                        <Skeleton className="h-3 w-24" />
-                                    </CardHeader>
-                                    <CardContent className="p-4 pt-0">
-                                        <Skeleton className="h-8 w-16 mb-1" />
-                                        <Skeleton className="h-3 w-20" />
-                                    </CardContent>
-                                </Card>
-                            ))}
-                        </div>
-                    </div>
-
-                    {/* Performance Skeleton */}
-                    <div className="space-y-4">
-                        <div className="flex items-center justify-between">
-                            <Skeleton className="h-7 w-48" />
-                            <Skeleton className="h-5 w-16" />
-                        </div>
-                        <Card className="p-4">
-                            <div className="space-y-4">
-                                {[1, 2, 3, 4, 5].map((i) => (
-                                    <Skeleton key={i} className="h-10 w-full" />
-                                ))}
-                            </div>
-                        </Card>
-                    </div>
-
-                    {/* Behavioral & Suggestions Skeleton */}
-                    <div className="space-y-4">
-                        <Skeleton className="h-7 w-48" />
-                        <div className="grid gap-4 md:grid-cols-2">
-                            <Skeleton className="h-24 w-full" />
-                            <Skeleton className="h-24 w-full" />
-                        </div>
-                    </div>
-                </main>
-                <MobileNav />
-            </SidebarInset>
-        )
-    }
-
-    if (!insights) return null;
+    }, [assets, history, isLoading]);
 
     return (
         <SidebarInset className="bg-blue-50/50 dark:bg-background pb-16 md:pb-0">
@@ -111,22 +42,76 @@ function InsightsContent() {
             </header>
 
             <main className="flex flex-col gap-6 p-4 md:p-8 w-full">
+                {isLoading ? (
+                    <>
+                        {/* Alerts Skeleton */}
+                        <div className="space-y-4">
+                            <Skeleton className="h-7 w-24" />
+                            <div className="space-y-3">
+                                <Skeleton className="h-20 w-full rounded-lg" />
+                            </div>
+                        </div>
 
-                {/* 1. Alerts (High Priority) */}
-                <KeyAlerts alerts={insights.alerts} />
+                        {/* Health Skeleton */}
+                        <div className="space-y-4">
+                            <Skeleton className="h-7 w-32" />
+                            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                                {[1, 2, 3, 4].map((i) => (
+                                    <Card key={i}>
+                                        <CardHeader className="p-4 pb-2">
+                                            <Skeleton className="h-3 w-24" />
+                                        </CardHeader>
+                                        <CardContent className="p-4 pt-0">
+                                            <Skeleton className="h-8 w-16 mb-1" />
+                                            <Skeleton className="h-3 w-20" />
+                                        </CardContent>
+                                    </Card>
+                                ))}
+                            </div>
+                        </div>
 
-                {/* 2. Health Summary */}
-                <PortfolioHealthSummary health={insights.health} />
+                        {/* Performance Skeleton */}
+                        <div className="space-y-4">
+                            <div className="flex items-center justify-between">
+                                <Skeleton className="h-7 w-48" />
+                                <Skeleton className="h-5 w-16" />
+                            </div>
+                            <Card className="p-4">
+                                <div className="space-y-4">
+                                    {[1, 2, 3, 4, 5].map((i) => (
+                                        <Skeleton key={i} className="h-10 w-full" />
+                                    ))}
+                                </div>
+                            </Card>
+                        </div>
 
-                {/* 3. Performance Drivers */}
-                <PerformanceAttribution items={insights.attribution} />
+                        {/* Behavioral & Suggestions Skeleton */}
+                        <div className="space-y-4">
+                            <Skeleton className="h-7 w-48" />
+                            <div className="grid gap-4 md:grid-cols-2">
+                                <Skeleton className="h-24 w-full" />
+                                <Skeleton className="h-24 w-full" />
+                            </div>
+                        </div>
+                    </>
+                ) : insights ? (
+                    <>
+                        {/* 1. Alerts (High Priority) */}
+                        <KeyAlerts alerts={insights.alerts} />
 
-                {/* 4. Behavioral */}
-                <BehavioralInsights behaviors={insights.behavior} />
+                        {/* 2. Health Summary */}
+                        <PortfolioHealthSummary health={insights.health} />
 
-                {/* 5. Suggestions */}
-                <ActionSuggestions />
+                        {/* 3. Performance Drivers */}
+                        <PerformanceAttribution items={insights.attribution} />
 
+                        {/* 4. Behavioral */}
+                        <BehavioralInsights behaviors={insights.behavior} />
+
+                        {/* 5. Suggestions */}
+                        <ActionSuggestions />
+                    </>
+                ) : null}
             </main>
 
             <MobileNav />

@@ -1,11 +1,16 @@
-import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { ForbiddenException, Inject, Injectable, NotFoundException } from '@nestjs/common';
+import type { Cache } from 'cache-manager';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreatePortfolioDto } from './dto/create-portfolio.dto';
 import { UpdatePortfolioDto } from './dto/update-portfolio.dto';
 
 @Injectable()
 export class PortfolioService {
-    constructor(private prisma: PrismaService) { }
+    constructor(
+        private prisma: PrismaService,
+        @Inject(CACHE_MANAGER) private cacheManager: Cache
+    ) { }
 
     async create(userId: string, createPortfolioDto: CreatePortfolioDto) {
         // Check if this is the user's first portfolio
@@ -24,6 +29,9 @@ export class PortfolioService {
                 goals: true,
             },
         });
+
+        // Invalidate cache implicitly (new portfolio has no history yet, so redundant but safe)
+        await this.invalidateHistoryCache(portfolio.id);
 
         return this.enrichPortfolio(portfolio);
     }
@@ -88,10 +96,16 @@ export class PortfolioService {
             where: { id },
         });
 
+        await this.invalidateHistoryCache(id);
+
         return { message: 'Portfolio deleted successfully' };
     }
 
     async getHistory(portfolioId: string, range: string) {
+        const cacheKey = `portfolio:history:${portfolioId}:${range}`;
+        const cached = await this.cacheManager.get(cacheKey);
+        if (cached) return cached;
+
         const now = new Date();
         const startDate = new Date();
         startDate.setUTCHours(0, 0, 0, 0);
@@ -116,7 +130,7 @@ export class PortfolioService {
                 startDate.setMonth(now.getMonth() - 1);
         }
 
-        return this.prisma.portfolioSnapshot.findMany({
+        const history = await this.prisma.portfolioSnapshot.findMany({
             where: {
                 portfolioId,
                 date: {
@@ -127,6 +141,9 @@ export class PortfolioService {
                 date: 'asc'
             }
         });
+
+        await this.cacheManager.set(cacheKey, history, 600 * 1000); // 10 minutes
+        return history;
     }
 
     async recordSnapshot(portfolioId: string) {
@@ -180,6 +197,15 @@ export class PortfolioService {
                 currency: portfolio.currency
             }
         });
+
+        await this.invalidateHistoryCache(portfolioId);
+    }
+
+    private async invalidateHistoryCache(portfolioId: string) {
+        const ranges = ['1M', '3M', '6M', '1Y', 'ALL'];
+        await Promise.all(
+            ranges.map(range => this.cacheManager.del(`portfolio:history:${portfolioId}:${range}`))
+        );
     }
 
     // Helper: Add calculated fields to portfolio
