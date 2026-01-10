@@ -3,7 +3,7 @@ import { BarChart3, PieChart, ShieldCheck, TrendingUp } from "lucide-react"
 
 export default function HeroSection() {
     return (
-        <section className="snap-section bg-[#f5f5f3] flex items-center justify-center pt-24 pb-12 px-6">
+        <section id="hero" className="snap-section bg-[#f5f5f3] flex items-center justify-center pt-24 pb-12 px-6">
             <div className="max-w-7xl w-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                 <div className="space-y-8 animate-in fade-in slide-in-from-left-8 duration-1000">
                     <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white border border-gray-200 text-xs font-medium shadow-sm w-fit">
