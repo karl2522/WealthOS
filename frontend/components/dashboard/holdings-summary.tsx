@@ -2,7 +2,7 @@
 
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { usePortfolio } from "@/contexts/portfolio-context";
+import { PortfolioAsset, usePortfolio } from "@/contexts/portfolio-context";
 import { AlertTriangle, ArrowDownRight, ArrowUpRight, DollarSign, Trophy } from "lucide-react";
 
 export function HoldingsSummary() {
@@ -34,12 +34,13 @@ export function HoldingsSummary() {
     const assets = portfolio?.assets || [];
 
     // Calculate Top Gainer and Loser based on P/L %
-    let topGainer: (typeof assets[0] & { plPercent: number }) | null = null;
-    let topLoser: (typeof assets[0] & { plPercent: number }) | null = null;
+    type AssetWithPL = PortfolioAsset & { plPercent: number };
+    let topGainer: AssetWithPL | null = null;
+    let topLoser: AssetWithPL | null = null;
     let maxPLPercent = -Infinity;
     let minPLPercent = Infinity;
 
-    assets.forEach(asset => {
+    for (const asset of assets) {
         const currentPrice = asset.currentPrice ? parseFloat(asset.currentPrice.toString()) : 0;
         const avgPrice = asset.avgPrice ? parseFloat(asset.avgPrice.toString()) : 0;
 
@@ -56,7 +57,7 @@ export function HoldingsSummary() {
                 topLoser = { ...asset, plPercent };
             }
         }
-    });
+    }
 
     // If max is still -Infinity (no assets or no avg price), reset
     if (maxPLPercent === -Infinity) topGainer = null;
