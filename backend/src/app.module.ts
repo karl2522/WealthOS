@@ -22,19 +22,63 @@ import { PrismaModule } from './prisma/prisma.module';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => {
+        // Prioritize REDIS_PUBLIC_URL as per Railway config
+        const redisPublicUrl = configService.get<string>('REDIS_PUBLIC_URL');
         const redisUrl = configService.get<string>('REDIS_URL');
+        // Support both naming conventions: REDIS_HOST (standard) and REDISHOST (Railway)
+        const redisHost = configService.get<string>('REDIS_HOST') || configService.get<string>('REDISHOST');
+        const redisPort = configService.get<number>('REDIS_PORT') || configService.get<number>('REDISPORT') || 6379;
+        const redisPassword = configService.get<string>('REDIS_PASSWORD') || configService.get<string>('REDISPASSWORD');
+        const redisUser = configService.get<string>('REDIS_USER') || configService.get<string>('REDISUSER');
+
+        console.log('Redis Config Debug:');
+        console.log(`REDIS_PUBLIC_URL present: ${!!redisPublicUrl}`);
+        console.log(`REDIS_URL present: ${!!redisUrl}`);
+        console.log(`REDISHOST: ${redisHost}`);
+        console.log(`REDISPORT: ${redisPort}`);
+        console.log(`REDISPASSWORD present: ${!!redisPassword}`);
+
+        // 1. Try Public URL
+        if (redisPublicUrl) {
+          console.log('Using REDIS_PUBLIC_URL');
+          return {
+            store: await redisStore({
+              url: redisPublicUrl,
+            }),
+          };
+        }
+
+        // 2. Try Standard URL
         if (redisUrl) {
+          console.log('Using REDIS_URL');
           return {
             store: await redisStore({
               url: redisUrl,
             }),
           };
         }
+
+        // 3. Try Host/Port/Password
+        if (redisHost) {
+          console.log('Using REDISHOST/PORT config');
+          return {
+            store: await redisStore({
+              socket: {
+                host: redisHost,
+                port: redisPort,
+              },
+              password: redisPassword,
+              username: redisUser,
+            }),
+          };
+        }
+
+        console.log('Using localhost fallback');
         return {
           store: await redisStore({
             socket: {
-              host: configService.get<string>('REDIS_HOST') || 'localhost',
-              port: configService.get<number>('REDIS_PORT') || 6379,
+              host: 'localhost',
+              port: 6379,
             },
           }),
         };
